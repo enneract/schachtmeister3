@@ -1,0 +1,13 @@
+line-length = 120
+target-version = "py310"
+
+[lint]
+select = ["E", "F", "I", "Q"]
+
+[lint.flake8-quotes]
+inline-quotes = "single"
+multiline-quotes = "double"
+docstring-quotes = "double"
+
+[format]
+quote-style = "single"

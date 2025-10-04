@@ -1,14 +1,21 @@
 import logging
 import re
-from asyncio import BaseTransport, DatagramProtocol, DatagramTransport, Future, Task, create_task, current_task, get_running_loop
+from asyncio import (
+    BaseTransport,
+    DatagramProtocol,
+    DatagramTransport,
+    Future,
+    Task,
+    create_task,
+    current_task,
+    get_running_loop,
+)
 from ipaddress import IPv4Address
 from typing import Any
 
-from schachtmeister.common import Address, JudgeFunction
+from schachtmeister3.common import Address, JudgeFunction
 
 logger = logging.getLogger(__name__)
-
-
 
 
 _QUAKE_OOB_HEADER = b'\xff\xff\xff\xff'
@@ -54,7 +61,6 @@ class UdpServer:
 
                 task = create_task(handle_request(data, address))
                 parent.tasks.add(task)
-
 
         transport, protocol = await get_running_loop().create_datagram_endpoint(
             lambda: _Protocol(),

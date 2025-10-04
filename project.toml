@@ -1,0 +1,23 @@
+[project]
+name = "schachtmeister3"
+version = "0.0.1"
+description = "Detect ban evasion by checking WHOIS and reverse DNS records"
+authors = [
+    { name = "Paweł Redman", email = "pawel.redman@gmail.com" },
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "mypy",
+    "ruff",
+    "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+dev-dependencies = ["mypy", "ruff"]

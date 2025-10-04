@@ -1,14 +1,8 @@
-from asyncio import create_subprocess_exec
 from ipaddress import IPv4Address
 
 
-
-
 async def whois(address: IPv4Address) -> str:
-    process = await asyncio.create_subprocess_exec(['whois', str(address)])
-
-
-
+    raise NotImplementedError('WHOIS lookup not implemented yet')
 
 
 async def _cached_whois(address: IPv4Address) -> str:
