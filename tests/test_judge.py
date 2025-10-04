@@ -6,9 +6,7 @@ from schachtmeister3.judge import Judge
 from schachtmeister3.schachts import Schachts
 
 
-pytestmark = pytest.mark.anyio('asyncio')
-
-
+@pytest.mark.asyncio
 async def test_judge_scores_whois_and_revdns(monkeypatch: pytest.MonkeyPatch) -> None:
     schachts = Schachts(
         whois=[(+10, 'Example Corp')],
@@ -31,6 +29,7 @@ async def test_judge_scores_whois_and_revdns(monkeypatch: pytest.MonkeyPatch) ->
     assert result == 5
 
 
+@pytest.mark.asyncio
 async def test_judge_revdns_suffix_matching(monkeypatch: pytest.MonkeyPatch) -> None:
     schachts = Schachts(
         whois=[],
@@ -53,6 +52,7 @@ async def test_judge_revdns_suffix_matching(monkeypatch: pytest.MonkeyPatch) -> 
     assert result == 7
 
 
+@pytest.mark.asyncio
 async def test_judge_no_matches(monkeypatch: pytest.MonkeyPatch) -> None:
     schachts = Schachts(
         whois=[(+10, 'Example Corp')],

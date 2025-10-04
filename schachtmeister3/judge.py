@@ -1,5 +1,5 @@
 import socket
-from asyncio import create_subprocess_exec, get_running_loop
+from asyncio import create_subprocess_exec, gather, get_running_loop
 from asyncio.subprocess import PIPE
 from ipaddress import IPv4Address
 from typing import Awaitable, Callable, Generic, TypeVar
@@ -89,13 +89,16 @@ class Judge:
     async def judge(self, address: IPv4Address) -> int:
         score = 0
 
-        whois_text = await self._cached_whois(address)
+        whois_text, revdns_hosts = await gather(
+            self._cached_whois(address),
+            self._cached_revdns(address),
+        )
+
         lower_whois = whois_text.casefold()
         for delta, needle in self._schachts.whois:
             if needle.casefold() in lower_whois:
                 score += delta
 
-        revdns_hosts = await self._cached_revdns(address)
         lowered_hosts = [host.casefold() for host in revdns_hosts]
         for delta, needle in self._schachts.revdns:
             needle_cf = needle.casefold()
