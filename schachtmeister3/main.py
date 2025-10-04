@@ -12,7 +12,7 @@ from schachtmeister3.udp import UdpServer
 
 def _build_parser() -> ArgumentParser:
     parser = ArgumentParser()
-    parser.add_argument('-h', '--host', default='127.0.0.1', help='Hostname or IP to bind the UDP server')
+    parser.add_argument('-l', '--listen', default='127.0.0.1', help='Hostname or IP to bind the UDP server')
     parser.add_argument('-p', '--port', type=int, default=DEFAULT_PORT, help='UDP port to bind')
     parser.add_argument('-s', '--schachts', required=True, type=Path, help='Path to schachts.list file')
     return parser
@@ -28,7 +28,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     schachts = load_schachts(args.schachts)
     judge = Judge(schachts)
-    udp_server = UdpServer((args.host, args.port), judge.judge)
+    udp_server = UdpServer((args.listen, args.port), judge.judge)
     asyncio.run(udp_server.listen())
 
 
