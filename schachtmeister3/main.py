@@ -6,6 +6,7 @@ from pathlib import Path
 
 from schachtmeister3.common import DEFAULT_PORT
 from schachtmeister3.judge import Judge
+from schachtmeister3.schachts import load_schachts
 from schachtmeister3.udp import UdpServer
 
 
@@ -25,7 +26,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     logging.basicConfig(level=logging.DEBUG)
 
-    judge = Judge()
+    schachts = load_schachts(args.schachts)
+    judge = Judge(schachts)
     udp_server = UdpServer((args.host, args.port), judge.judge)
     asyncio.run(udp_server.listen())
 

@@ -4,6 +4,8 @@ from asyncio.subprocess import PIPE
 from ipaddress import IPv4Address
 from typing import Awaitable, Callable, Generic, TypeVar
 
+from schachtmeister3.schachts import Schachts
+
 _Key = TypeVar('_Key')
 _Value = TypeVar('_Value')
 
@@ -66,7 +68,8 @@ async def _revdns(address: IPv4Address) -> tuple[str, ...]:
 
 
 class Judge:
-    def __init__(self, cache_ttl_seconds: float = 300.0) -> None:
+    def __init__(self, schachts: Schachts, cache_ttl_seconds: float = 300.0) -> None:
+        self._schachts = schachts
         self._cache_ttl_seconds = cache_ttl_seconds
         self._whois_cache: _Cache[IPv4Address, str] = _Cache(cache_ttl_seconds)
         self._revdns_cache: _Cache[IPv4Address, tuple[str, ...]] = _Cache(cache_ttl_seconds)
@@ -84,4 +87,21 @@ class Judge:
         return await self._revdns_cache.get(address, load)
 
     async def judge(self, address: IPv4Address) -> int:
-        return 420  # TODO
+        score = 0
+
+        whois_text = await self._cached_whois(address)
+        lower_whois = whois_text.casefold()
+        for delta, needle in self._schachts.whois:
+            if needle.casefold() in lower_whois:
+                score += delta
+
+        revdns_hosts = await self._cached_revdns(address)
+        lowered_hosts = [host.casefold() for host in revdns_hosts]
+        for delta, needle in self._schachts.revdns:
+            needle_cf = needle.casefold()
+            for host in lowered_hosts:
+                if host == needle_cf or host.endswith('.' + needle_cf):
+                    score += delta
+                    break
+
+        return score
