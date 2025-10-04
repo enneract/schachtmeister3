@@ -9,7 +9,7 @@ def test_load_schachts_from_iterable() -> None:
     entries = [
         '// comment-only line',
         'whois    +10    "Example Corp"',
-        'revdns   -5     "bad-host.example" // trailing comment',
+        'revdns   -5     bad-host.example // trailing comment',
     ]
 
     schachts = load_schachts(entries)
@@ -25,7 +25,7 @@ def test_load_schachts_from_file(tmp_path: Path) -> None:
         '// multi-entry example',
         'whois    +1    "Foo"',
         'whois    +2    "Bar"',
-        'revdns   -1    "baz.example"',
+        'revdns   -1    baz.example',
         '',
     ])
     path = tmp_path / 'schachts.list'
@@ -42,7 +42,7 @@ def test_load_schachts_from_file(tmp_path: Path) -> None:
     [
         ('foo +1 "Bar"', 'Unknown source'),
         ('whois nope "Bar"', 'Invalid score'),
-        ('whois +1 Bar', 'Needle must be a quoted string'),
+        ('whois +1 Foo Bar', 'Invalid entry'),
         ('whois +1', 'Invalid entry'),
     ],
 )

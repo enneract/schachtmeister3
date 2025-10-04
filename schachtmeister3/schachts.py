@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shlex
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
@@ -37,43 +38,15 @@ def _parse_line(line: str) -> tuple[str, int, str] | None:
     if not clean:
         return None
 
-    parts: list[str] = []
-    token = ''
-    in_string = False
-    escaped = False
-
-    for char in clean:
-        if in_string:
-            token += char
-            if char == '"' and not escaped:
-                in_string = False
-                parts.append(token)
-                token = ''
-            elif char == '"' and escaped:
-                escaped = False
-            elif char == '\\' and not escaped:
-                escaped = True
-            else:
-                escaped = False
-            continue
-        if char.isspace():
-            if token:
-                parts.append(token)
-                token = ''
-            continue
-        if char == '"':
-            token += char
-            in_string = True
-            continue
-        token += char
-
-    if token:
-        parts.append(token)
+    try:
+        parts = shlex.split(clean)
+    except ValueError as exc:
+        raise SchachtsFileError(f'Invalid entry: {line.strip()}') from exc
 
     if len(parts) != 3:
         raise SchachtsFileError(f'Invalid entry: {line.strip()}')
 
-    source, score_str, needle_token = parts
+    source, score_str, needle = parts
     if source not in {'whois', 'revdns'}:
         raise SchachtsFileError(f'Unknown source `{source}` in line: {line.strip()}')
 
@@ -81,11 +54,6 @@ def _parse_line(line: str) -> tuple[str, int, str] | None:
         score = int(score_str)
     except ValueError as exc:
         raise SchachtsFileError(f'Invalid score `{score_str}` in line: {line.strip()}') from exc
-
-    if not (needle_token.startswith('"') and needle_token.endswith('"')):
-        raise SchachtsFileError(f'Needle must be a quoted string in line: {line.strip()}')
-
-    needle = needle_token[1:-1]
 
     return source, score, needle
 
