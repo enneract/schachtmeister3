@@ -33,12 +33,19 @@ class UdpServer:
         assert self.transport
 
         if not (match := _RE_SM2_QUERY.match(data)):
+            logger.debug('Ignored non-matching packet from %s:%s', address[0], address[1])
             return
 
-        query_address = IPv4Address(match.group(1).decode('ascii'))
-        judgement = await self.judge(query_address)
-        response = QUAKE_OOB_HEADER + f'sm2reply {query_address} {judgement}'.encode('ascii')
-        self.transport.sendto(response, address)
+        try:
+            query_address = IPv4Address(match.group(1).decode('ascii'))
+            judgement = await self.judge(query_address)
+            response = QUAKE_OOB_HEADER + f'sm2reply {query_address} {judgement}'.encode('ascii')
+            self.transport.sendto(response, address)
+        except Exception:  # pragma: no cover - defensive guard
+            logger.exception('Error processing request from %s:%s', address[0], address[1])
+            return
+
+        logger.debug('Responded to %s:%s with %s for %s', address[0], address[1], judgement, query_address)
 
     async def listen(self) -> None:
         parent = self
@@ -58,7 +65,8 @@ class UdpServer:
                         if task := current_task():
                             parent.tasks.remove(task)
 
-                task = create_task(handle_request(data, address))
+                task_name = f'udp-{address[0]}:{address[1]}'
+                task = create_task(handle_request(data, address), name=task_name)
                 parent.tasks.add(task)
 
         transport, protocol = await get_running_loop().create_datagram_endpoint(

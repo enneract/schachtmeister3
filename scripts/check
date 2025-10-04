@@ -4,7 +4,7 @@ set -euo pipefail
 REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${REPO_ROOT}"
 
-uv run ruff format schachtmeister3
-uv run ruff check schachtmeister3
-uv run mypy --strict schachtmeister3
-uv run --with pytest-asyncio pytest
+uv run --with ruff ruff format schachtmeister3
+uv run --with ruff ruff check schachtmeister3
+uv run --with mypy mypy --strict schachtmeister3
+uv run --with pytest --with pytest-asyncio pytest
