@@ -1,6 +1,6 @@
 # Schachtmeister3
 
-Schachtmeister3 is a Python rewrite of [Schachtmeister2](https://redman.xyz/git/schachtmeister2/), a toolkit for spotting VPN use and ban evasion by inspecting WHOIS data and reverse DNS (RevDNS) records. The rewrite is a collaboration between Paweł Redman and gpt-5-codex.
+Schachtmeister3 is a Python rewrite of [Schachtmeister2](https://redman.xyz/git/schachtmeister2/), a toolkit for spotting VPN use and ban evasion by inspecting WHOIS data and reverse DNS (RevDNS) records. The rewrite is a collaboration between Paweł Redman and gpt-5-codex.[^schacht]
 
 ## What It Does
 - Listens for UDP queries from game servers (e.g., Unvanquished) and returns a score based on WHOIS and RevDNS matches.
@@ -75,3 +75,5 @@ Malformed or unknown requests are ignored silently. Clients should treat timeout
 - Licensed under the GNU General Public License v3. See `LICENSE` for full terms.
 - Original C implementation: Paweł Redman — [Schachtmeister2](https://redman.xyz/git/schachtmeister2/).
 - Python rewrite: Paweł Redman & gpt-5-codex.
+
+[^schacht]: “Schachtmeister” is intentionally distinct from the German *Schachmeister* (“chess master”). The name riffs on **Ventilationsschacht**, a callout from mapper yalt’s Tremulous level, which players found amusing. “Schacht” became a tongue-in-cheek slur for nuisance players, so the “master of schachts” is the daemon keeping VPN-abusing troublemakers out.
