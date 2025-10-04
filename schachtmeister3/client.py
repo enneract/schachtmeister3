@@ -6,9 +6,7 @@ from collections.abc import Sequence
 from ipaddress import IPv4Address
 from typing import Protocol
 
-from schachtmeister3.common import DEFAULT_PORT
-
-_QUAKE_OOB_HEADER = b'\xff\xff\xff\xff'
+from schachtmeister3.common import DEFAULT_PORT, QUAKE_OOB_HEADER
 
 
 class _SocketFactory(Protocol):
@@ -30,14 +28,14 @@ def parse_args(argv: Sequence[str] | None = None) -> Namespace:
 
 
 def _build_query(address: IPv4Address) -> bytes:
-    return _QUAKE_OOB_HEADER + f'sm2query {address}'.encode('ascii')
+    return QUAKE_OOB_HEADER + f'sm2query {address}'.encode('ascii')
 
 
 def _parse_response(address: IPv4Address, payload: bytes) -> int:
-    if not payload.startswith(_QUAKE_OOB_HEADER):
+    if not payload.startswith(QUAKE_OOB_HEADER):
         raise RuntimeError('Malformed response: missing quake header')
 
-    body = payload[len(_QUAKE_OOB_HEADER) :].decode('ascii', errors='replace').strip()
+    body = payload[len(QUAKE_OOB_HEADER) :].decode('ascii', errors='replace').strip()
     parts = body.split()
     if len(parts) != 3 or parts[0] != 'sm2reply':
         raise RuntimeError('Malformed response: unexpected body')

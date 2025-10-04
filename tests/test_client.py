@@ -7,6 +7,7 @@ import socket
 import pytest
 
 from schachtmeister3.client import _build_query, _parse_response, request_score
+from schachtmeister3.common import QUAKE_OOB_HEADER
 
 
 class DummySocket:
@@ -44,13 +45,13 @@ def make_socket_factory(response: bytes):
 def test_build_query() -> None:
     ip = IPv4Address('203.0.113.5')
     payload = _build_query(ip)
-    assert payload.startswith(b'\xff\xff\xff\xffsm2query ')
+    assert payload.startswith(QUAKE_OOB_HEADER + b'sm2query ')
     assert payload.endswith(b'203.0.113.5')
 
 
 def test_parse_response_success() -> None:
     ip = IPv4Address('198.51.100.1')
-    payload = b'\xff\xff\xff\xffsm2reply 198.51.100.1 42'
+    payload = QUAKE_OOB_HEADER + b'sm2reply 198.51.100.1 42'
     assert _parse_response(ip, payload) == 42
 
 
@@ -58,9 +59,9 @@ def test_parse_response_success() -> None:
     'payload, message',
     [
         (b'bad-header', 'missing quake header'),
-        (b'\xff\xff\xff\xffnope', 'unexpected body'),
-        (b'\xff\xff\xff\xffsm2reply 203.0.113.5 notanumber', 'Invalid score'),
-        (b'\xff\xff\xff\xffsm2reply 203.0.113.6 10', 'Mismatched address'),
+        (QUAKE_OOB_HEADER + b'nope', 'unexpected body'),
+        (QUAKE_OOB_HEADER + b'sm2reply 203.0.113.5 notanumber', 'Invalid score'),
+        (QUAKE_OOB_HEADER + b'sm2reply 203.0.113.6 10', 'Mismatched address'),
     ],
 )
 def test_parse_response_errors(payload: bytes, message: str) -> None:
@@ -71,7 +72,7 @@ def test_parse_response_errors(payload: bytes, message: str) -> None:
 
 
 def test_request_score_round_trip(monkeypatch: pytest.MonkeyPatch) -> None:
-    response = b'\xff\xff\xff\xffsm2reply 203.0.113.5 17'
+    response = QUAKE_OOB_HEADER + b'sm2reply 203.0.113.5 17'
     factory = make_socket_factory(response)
 
     result = request_score('example.com', 1234, '203.0.113.5', 1.0, sock_factory=factory)

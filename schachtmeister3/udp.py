@@ -13,13 +13,12 @@ from asyncio import (
 from ipaddress import IPv4Address
 from typing import Any
 
-from schachtmeister3.common import Address, JudgeFunction
+from schachtmeister3.common import QUAKE_OOB_HEADER, Address, JudgeFunction
 
 logger = logging.getLogger(__name__)
 
 
-_QUAKE_OOB_HEADER = b'\xff\xff\xff\xff'
-_RE_SM2_QUERY = re.compile(_QUAKE_OOB_HEADER + rb'sm2query (\d+\.\d+\.\d+\.\d+)')
+_RE_SM2_QUERY = re.compile(QUAKE_OOB_HEADER + rb'sm2query (\d+\.\d+\.\d+\.\d+)')
 
 
 class UdpServer:
@@ -38,7 +37,7 @@ class UdpServer:
 
         query_address = IPv4Address(match.group(1).decode('ascii'))
         judgement = await self.judge(query_address)
-        response = _QUAKE_OOB_HEADER + f'sm2reply {query_address} {judgement}'.encode('ascii')
+        response = QUAKE_OOB_HEADER + f'sm2reply {query_address} {judgement}'.encode('ascii')
         self.transport.sendto(response, address)
 
     async def listen(self) -> None:
