@@ -7,3 +7,4 @@ cd "${REPO_ROOT}"
 uv run ruff format schachtmeister3
 uv run ruff check schachtmeister3
 uv run mypy --strict schachtmeister3
+uv run pytest
