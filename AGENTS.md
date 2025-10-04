@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-The Python sources live in `schachtmeister3/`; `main.py` boots the UDP daemon, `udp.py` handles Quake-style packets, `judge.py` orchestrates WHOIS lookups, and `common.py` collects shared types and defaults. `client.py` will grow into a CLI helper but is still a stub. Keep legacy C code in `schachtmeister2/` untouched for reference only. Tooling manifests (`project.toml`, `ruff.toml`, `mypy.ini`) sit at the repository root, and shared developer scripts belong under `scripts/` (see `scripts/check`).
+The Python sources live in `schachtmeister3/`; `main.py` boots the UDP daemon, `udp.py` handles Quake-style packets, `judge.py` orchestrates WHOIS lookups, and `common.py` collects shared types and defaults. `client.py` will grow into a CLI helper but is still a stub. Keep legacy C code in `schachtmeister2/` untouched for reference only. Tooling manifests (`pyproject.toml`, `ruff.toml`, `mypy.ini`) sit at the repository root, and shared developer scripts belong under `scripts/` (see `scripts/check`).
 
 ## Build, Test, and Development Commands
 Use uv for workflows: `uv run python -m schachtmeister3.main` starts the asyncio daemon once imports are aligned, and `uv run python -m schachtmeister3.client` will eventually query it. Run formatting and static checks with `scripts/check`. Pytest is the test runner: `uv run pytest` discovers tests under `tests/` once they exist.

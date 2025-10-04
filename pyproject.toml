@@ -20,5 +20,8 @@ dev = [
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["schachtmeister3*"]
+
 [tool.uv]
 dev-dependencies = ["mypy", "ruff", "pytest", "pytest-asyncio"]
